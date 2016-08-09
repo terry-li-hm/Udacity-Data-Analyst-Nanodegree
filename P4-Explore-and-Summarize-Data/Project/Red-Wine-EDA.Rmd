@@ -38,6 +38,7 @@ library(gridExtra)
 library(tidyr)
 library(RColorBrewer)
 library(GGally)
+theme_set(theme_minimal(10))
 ```
 
 ```{r echo=TRUE, Load_the_Data}
@@ -64,6 +65,10 @@ ggplot(aes(x = fixed.acidity), data = wine) +
 ggplot(aes(x = fixed.acidity), data = wine) +
   geom_histogram(binwidth = 0.1)
 
+ggplot(aes(x = fixed.acidity), data = wine) +
+  geom_histogram(binwidth = 0.01) +
+  scale_x_log10()
+  
 summary(wine$fixed.acidity)
 ```
 
@@ -77,8 +82,6 @@ ggplot(aes(x = volatile.acidity), data = wine) +
 ggplot(aes(x = volatile.acidity), data = wine) +
   geom_histogram(binwidth = 0.01) + 
   scale_x_continuous(limits = c(quantile(wine$volatile.acidity, 0.01), quantile(wine$volatile.acidity, 0.99)), breaks = seq(0.25, 1, 0.1))
-
-theme_set(theme_minimal(10))
 
 summary(wine$volatile.acidity)
 ```
@@ -109,6 +112,11 @@ ggplot(aes(x = residual.sugar), data = wine) +
 ggplot(aes(x = residual.sugar), data = wine) +
   geom_histogram(binwidth = 0.1) +
   xlim(1, 5)
+
+ggplot(aes(x = residual.sugar), data = wine) +
+  geom_histogram(binwidth = 0.1) +
+  xlim(1, 5) +
+  scale_x_log10()
 
 summary(wine$residual.sugar)
 ```
@@ -142,6 +150,11 @@ ggplot(aes(x = free.sulfur.dioxide), data = wine) +
   geom_histogram(binwidth = 1) +
   xlim(0, quantile(wine$free.sulfur.dioxide, 0.99))
 
+ggplot(aes(x = free.sulfur.dioxide), data = wine) +
+  geom_histogram(binwidth = 0.05) +
+  xlim(0, quantile(wine$free.sulfur.dioxide, 0.99)) +
+  scale_x_log10()
+
 summary(wine$free.sulfur.dioxide)
 ```
 
@@ -159,6 +172,11 @@ ggplot(aes(x = total.sulfur.dioxide), data = wine) +
 ggplot(aes(x = total.sulfur.dioxide), data = wine) +
   geom_histogram(binwidth = 1) +
   xlim(0, quantile(wine$total.sulfur.dioxide, 0.99))
+
+ggplot(aes(x = total.sulfur.dioxide), data = wine) +
+  geom_histogram(binwidth = 0.1) +
+  xlim(0, quantile(wine$total.sulfur.dioxide, 0.99))+
+  scale_x_log10()
 
 summary(wine$total.sulfur.dioxide)
 ```
@@ -212,6 +230,11 @@ ggplot(aes(x = sulphates),  data = wine) +
   geom_histogram(binwidth = 0.01) +
   xlim(min(wine$sulphates), quantile(wine$sulphates, 0.99))
 
+ggplot(aes(x = sulphates),  data = wine) +
+  geom_histogram(binwidth = 0.01) +
+  xlim(min(wine$sulphates), quantile(wine$sulphates, 0.99)) +
+  scale_x_log10()
+
 summary(wine$sulphates)
 ```
 
@@ -222,6 +245,10 @@ The variable `sulphates` looked kind of normal with lightly right-skewed shape.
 ggplot(aes(x = alcohol), data = wine) +
   geom_histogram(binwidth = 0.1)
 
+ggplot(aes(x = alcohol), data = wine) +
+  geom_histogram(binwidth = 0.01) + 
+  scale_x_log10()
+
 summary(wine$alcohol)
 ```
 
@@ -229,8 +256,8 @@ The variable `alcohol` is right-skewed.
 
 
 ```{r echo=TRUE, warning=FALSE, Univariate_Plots_Quality}
-ggplot(aes(x = quality), data = wine) +
-  geom_histogram(binwidth = 1)
+ggplot(aes(x = factor(quality)), data = wine) +
+  geom_bar()
 
 summary(wine$quality)
 summary(factor(wine$quality))
@@ -415,7 +442,8 @@ ggplot(aes(x = volatile.acidity,
        data = wine) +
       geom_point(alpha = 0.5, size = 2) +
       geom_smooth(method = "lm", se = FALSE,size=1)  +
-  scale_color_brewer(type = 'div', guide = guide_legend(title = 'Quality'))
+  scale_color_brewer(palette = "Reds", guide = guide_legend(title = 'Quality')) + 
+  theme_dark()
 ```
 
 ```{r echo=TRUE, Multivariate_Plots_Volatile.Acidity_Citric_Acid_by_Quality}
@@ -424,7 +452,8 @@ ggplot(aes(x = volatile.acidity,
        data = wine) +
       geom_point(alpha = 0.5, size = 2) +
       geom_smooth(method = "lm", se = FALSE,size=1)  +
-  scale_color_brewer(type = 'div', guide = guide_legend(title = 'Quality'))
+  scale_color_brewer(palette = "Reds", guide = guide_legend(title = 'Quality')) + 
+  theme_dark()
 ```
 
 # Multivariate Analysis
@@ -445,7 +474,8 @@ It is interesting that. for citric acid, the value 0.00, 0.24 and 0.49 appeared 
 
 ### Plot One
 ```{r echo=TRUE, Plot_One}
-ggcorr(wine[, 2:14], label = TRUE, label_size = 3, label_round = 3, label_alpha = TRUE, hjust = 0.75, size = 3, color = "grey50", layout.exp = 1)
+ggcorr(wine[, 2:14], label = TRUE, label_size = 3, label_round = 3, label_alpha = TRUE, hjust = 0.75, size = 3, color = "grey50", layout.exp = 1) + 
+  ggtitle("Correlation Matrix")
 ```
 
 ### Description One
@@ -497,7 +527,8 @@ ggplot(aes(x = volatile.acidity,
        data = wine) +
       geom_point(alpha = 0.5, size = 2) +
       geom_smooth(method = "lm", se = FALSE,size=1)  +
-  scale_color_brewer(type = 'div', guide = guide_legend(title = 'Quality')) +
+  scale_color_brewer(palette = "Reds", guide = guide_legend(title = 'Quality')) + 
+  theme_dark() +
   ggtitle("Alcohol Percentage vs Volatile Acidity by Quality") +
   ylab("Alcohol (% by volume)") +
   xlab("Volatile Acidity (g/dm^3)")
@@ -519,4 +550,4 @@ One of the struggles is that I tried to create a new variable `sulfur dioxide ra
 
 On the other hand, I think one of my successes is to note that fixed acidity has a strong negative relationship with pH (-0.673), which is a big surprise to me.
 
-It would be even more interesting if the price of the wines are included in this dateset.
+It would be even more interesting if the price of the wines are included in this dateset. I would expect that while all the expensive wines should have high quality, some of the cheap wines would also have good quality and they are cheap only because they are not well promoted.
